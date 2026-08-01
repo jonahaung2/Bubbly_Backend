@@ -68,3 +68,17 @@ Admin endpoints use `Authorization: Bearer <ADMIN_API_TOKEN>`:
 - `PUT|DELETE /v1/admin/groups/:id`
 - `GET /v1/admin/media`
 - `PUT|DELETE /v1/admin/media/:id`
+
+## Backend architecture
+
+The service uses explicit boundaries that allow features to grow independently:
+
+- Controllers own HTTP routing, authentication context, request decoding, and status codes.
+- DTOs define versioned external contracts and validation.
+- Repositories own persistence, transactions, pagination, and query optimization.
+- Models represent the PostgreSQL schema and never cross the HTTP boundary directly.
+- Configuration and authentication are initialized once in the application composition root.
+
+Collection APIs use bounded keyset pagination instead of offsets. Admin media listings select metadata and `OCTET_LENGTH(data)` without loading binary payloads. Group listings fetch memberships in one batched query, and membership replacement uses a batched create inside a transaction.
+
+For deployments where media volume outgrows PostgreSQL, move binary payloads to S3-compatible object storage while retaining asset metadata, ownership, versions, and lookup indexes in PostgreSQL. Keep the existing HTTP contracts stable so clients and the admin panel do not require a coordinated migration.

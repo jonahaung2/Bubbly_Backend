@@ -90,13 +90,14 @@ enum GroupRepository {
             try await GroupMemberModel.query(on: transaction)
                 .filter(\.$group.$id == id)
                 .delete()
-            for memberID in request.members {
-                try await GroupMemberModel(
+            let memberships = request.members.map { memberID in
+                GroupMemberModel(
                     groupID: id,
                     groupUID: groupID,
                     userID: memberID
-                ).create(on: transaction)
+                )
             }
+            try await memberships.create(on: transaction)
             return response(group: group, members: request.members)
         }
     }

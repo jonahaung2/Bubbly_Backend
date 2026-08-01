@@ -145,4 +145,26 @@ struct ValidationTests {
             ).validated()
         }
     }
+
+    @Test
+    func validatesAdminPageRequests() throws {
+        let cursor = UUID()
+        let defaultPage = try AdminPageRequest(cursorValue: nil, requestedLimit: nil)
+        let maximumPage = try AdminPageRequest(
+            cursorValue: cursor.uuidString,
+            requestedLimit: 10_000
+        )
+        let minimumPage = try AdminPageRequest(cursorValue: nil, requestedLimit: -10)
+        #expect(defaultPage.limit == AdminPageRequest.defaultLimit)
+        #expect(maximumPage.cursor == cursor)
+        #expect(maximumPage.limit == AdminPageRequest.maximumLimit)
+        #expect(minimumPage.limit == 1)
+    }
+
+    @Test
+    func rejectsInvalidAdminPageCursor() {
+        #expect(throws: (any Error).self) {
+            try AdminPageRequest(cursorValue: "invalid", requestedLimit: 100)
+        }
+    }
 }
