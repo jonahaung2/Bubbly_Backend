@@ -44,7 +44,9 @@ struct GroupsView: View {
         .navigationTitle("Groups")
         .searchable(text: $searchText, prompt: "Search groups or members")
         .sheet(item: $editingGroup) { group in
-            GroupEditorView(group: group, model: model)
+            NavigationStack {
+                GroupEditorView(group: group, model: model)
+            }
         }
         .confirmationDialog("Delete Group?", isPresented: .init(get: { deletingGroup != nil }, set: { if !$0 { deletingGroup = nil } }), presenting: deletingGroup) { group in
             Button("Delete \(group.name)", role: .destructive) {

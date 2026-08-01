@@ -43,7 +43,9 @@ struct ContactsView: View {
         .navigationTitle("Contacts")
         .searchable(text: $searchText, prompt: "Search contacts")
         .sheet(item: $editingContact) { contact in
-            ContactEditorView(contact: contact, model: model)
+            NavigationStack {
+                ContactEditorView(contact: contact, model: model)
+            }
         }
         .confirmationDialog("Delete Contact?", isPresented: .init(get: { deletingContact != nil }, set: { if !$0 { deletingContact = nil } }), presenting: deletingContact) { contact in
             Button("Delete \(contact.name)", role: .destructive) {

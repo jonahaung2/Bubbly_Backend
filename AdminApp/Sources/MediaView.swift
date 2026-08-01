@@ -45,7 +45,9 @@ struct MediaView: View {
         .navigationTitle("Media")
         .searchable(text: $searchText, prompt: "Search media")
         .sheet(item: $selectedMedia) { media in
-            MediaDetailView(media: media, model: model)
+            NavigationStack {
+                MediaDetailView(media: media, model: model)
+            }
         }
     }
 }
