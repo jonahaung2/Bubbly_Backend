@@ -14,4 +14,9 @@ func routes(_ app: Application) throws {
     try authenticated.register(collection: GroupsController())
     try authenticated.register(collection: PushNotificationsController())
     try authenticated.register(collection: MediaController())
+
+    if let adminAPIToken = app.bubblyConfiguration.adminAPIToken {
+        let admin = app.grouped(AdminAuthenticationMiddleware(expectedToken: adminAPIToken))
+        try admin.register(collection: AdminController())
+    }
 }

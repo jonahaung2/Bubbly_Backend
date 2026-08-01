@@ -5,6 +5,7 @@ struct AppConfiguration: Sendable {
     let firebaseProjectID: String
     let firebaseServiceAccount: FirebaseServiceAccount
     let publicBaseURL: URL
+    let adminAPIToken: String?
 
     static func load(environment: Environment) throws -> AppConfiguration {
         guard let firebaseProjectID = Environment.get("FIREBASE_PROJECT_ID")?.trimmedNonempty else {
@@ -24,10 +25,15 @@ struct AppConfiguration: Sendable {
         if environment == .production, publicBaseURL.scheme != "https" {
             throw ConfigurationError.insecurePublicURL
         }
+        let adminAPIToken = Environment.get("ADMIN_API_TOKEN")?.trimmedNonempty
+        if let adminAPIToken, adminAPIToken.utf8.count < 32 {
+            throw ConfigurationError.invalid("ADMIN_API_TOKEN must contain at least 32 bytes")
+        }
         return AppConfiguration(
             firebaseProjectID: firebaseProjectID,
             firebaseServiceAccount: firebaseServiceAccount,
-            publicBaseURL: publicBaseURL
+            publicBaseURL: publicBaseURL,
+            adminAPIToken: adminAPIToken
         )
     }
 }

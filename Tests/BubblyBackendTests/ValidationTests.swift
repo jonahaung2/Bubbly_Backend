@@ -99,4 +99,50 @@ struct ValidationTests {
             ).validated(senderUserID: "sender")
         }
     }
+
+    @Test
+    func validatesAdminContactInput() throws {
+        let request = AdminContactUpdateRequest(
+            name: "  Ada Lovelace  ",
+            mobile: "+14155552671",
+            publicKey: "public-key"
+        )
+        let validated = try request.validated()
+        #expect(validated.name == "Ada Lovelace")
+        #expect(validated.mobile == "+14155552671")
+    }
+
+    @Test
+    func rejectsInvalidAdminContactInput() {
+        #expect(throws: (any Error).self) {
+            try AdminContactUpdateRequest(
+                name: "   ",
+                mobile: "not-a-phone-number",
+                publicKey: "public-key"
+            ).validated()
+        }
+    }
+
+    @Test
+    func validatesAdminGroupInput() throws {
+        let request = AdminGroupUpdateRequest(
+            name: "  Operations  ",
+            photoURL: "https://example.com/group.png",
+            members: ["second", "first", "second"]
+        )
+        let validated = try request.validated()
+        #expect(validated.name == "Operations")
+        #expect(validated.members == ["first", "second"])
+    }
+
+    @Test
+    func rejectsInsecureAdminGroupPhotoURL() {
+        #expect(throws: (any Error).self) {
+            try AdminGroupUpdateRequest(
+                name: "Operations",
+                photoURL: "http://example.com/group.png",
+                members: ["member"]
+            ).validated()
+        }
+    }
 }

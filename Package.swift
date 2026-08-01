@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "BubblyBackend",
     platforms: [
-        .macOS(.v13),
+        .macOS(.v14),
         .iOS(.v26)
     ],
     dependencies: [
@@ -24,6 +24,12 @@ let package = Package(
                 .product(name: "JWTKit", package: "jwt-kit")
             ],
             swiftSettings: swiftSettings
+        ),
+        .executableTarget(
+            name: "BubblyAdmin",
+            path: "AdminApp/Sources",
+            swiftSettings: swiftSettings,
+            linkerSettings: [.linkedFramework("Security")]
         ),
         .testTarget(
             name: "BubblyBackendTests",
@@ -45,4 +51,3 @@ var swiftSettings: [SwiftSetting] {
         .enableUpcomingFeature("ImmutableWeakCaptures")
     ]
 }
-
