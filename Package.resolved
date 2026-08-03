@@ -1,13 +1,13 @@
 {
-  "originHash" : "85426ea857ce869d3d0d5f6470b5fc45a0e64978e9d651e5742cbb5e417b968c",
+  "originHash" : "d38cd761c5498c5092858e2ef51e3246b43defb6535b7e635b136a23763cd8e7",
   "pins" : [
     {
       "identity" : "async-http-client",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swift-server/async-http-client.git",
       "state" : {
-        "revision" : "4603a8036d921ea999fadb742931546c341f4bd7",
-        "version" : "1.35.0"
+        "revision" : "9544287b9416c0bc71e58b9f3aead8dd14b16103",
+        "version" : "1.36.0"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/postgres-kit.git",
       "state" : {
-        "revision" : "7c079553e9cda74811e627775bf22e40a9405ad9",
-        "version" : "2.15.1"
+        "revision" : "218aaf6810db9e61398f887aaaf26424142bdb53",
+        "version" : "2.16.1"
       }
     },
     {
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/postgres-nio.git",
       "state" : {
-        "revision" : "f2188e05ba3546a76e61a5193c071b82c4d69a45",
-        "version" : "1.33.0"
+        "revision" : "39ce38a93408937bcd27f521f3cdf88266136b80",
+        "version" : "1.33.1"
       }
     },
     {
@@ -150,8 +150,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-certificates.git",
       "state" : {
-        "revision" : "89fbc3714264cce8db8e4ec51b64e01c3e28c6c5",
-        "version" : "1.19.3"
+        "revision" : "449dbbecd0f31e82b510ada227ca152caa8b5e98",
+        "version" : "1.19.4"
       }
     },
     {
@@ -177,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "1b6b2e274e85105bfa155183145a1dcfd63331f1",
-        "version" : "4.5.0"
+        "revision" : "47d3869a7291f085c1fb9fb1e6d3b97a793f45c6",
+        "version" : "4.5.1"
       }
     },
     {
@@ -249,8 +249,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio-http2.git",
       "state" : {
-        "revision" : "61d1b44f6e4e118792be1cff88ee2bc0267c6f9a",
-        "version" : "1.44.0"
+        "revision" : "45bdf670248be5f16ec0340e125dca285536f0fb",
+        "version" : "1.45.0"
       }
     },
     {
@@ -303,8 +303,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-system.git",
       "state" : {
-        "revision" : "b5544ba79a70a0cb3563e75bf26dc198d6b40ed3",
-        "version" : "1.7.4"
+        "revision" : "50688cacbd41d547e9eb9f7a213542340b7c442b",
+        "version" : "1.7.5"
       }
     },
     {
