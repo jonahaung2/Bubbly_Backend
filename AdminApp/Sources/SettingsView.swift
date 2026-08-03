@@ -7,7 +7,7 @@ struct SettingsView: View {
         Form {
             Section("Connection") {
                 TextField("Server URL", text: $model.baseURLText, prompt: Text("https://api.example.com"))
-                    .textContentType(.URL)
+
                 SecureField("Admin API Token", text: $model.token)
                     .textContentType(.password)
                 LabeledContent("Status") {

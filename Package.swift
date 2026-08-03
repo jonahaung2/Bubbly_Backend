@@ -23,7 +23,13 @@ let package = Package(
                 .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
                 .product(name: "JWTKit", package: "jwt-kit")
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            linkerSettings: [
+                .linkedFramework(
+                    "Security",
+                    .when(platforms: [.macOS, .iOS])
+                )
+            ]
         ),
         .executableTarget(
             name: "BubblyAdmin",
