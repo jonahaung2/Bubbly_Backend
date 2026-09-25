@@ -1,6 +1,6 @@
 # Bubbly Backend
 
-// PUBLIC_BASE_URL=http://192.168.80.127:8080 swift run BubblyBackend serve --env development --hostname 192.168.80.127 --port 8080
+// swift run BubblyBackend serve --env development --hostname 0.0.0.0 --port 8080
 
 The service stores contact profiles and profile images in PostgreSQL. Firebase Authentication remains the identity provider; every private endpoint verifies a Firebase ID token.
 
@@ -23,7 +23,7 @@ Set `FIREBASE_PROJECT_ID`, `PUBLIC_BASE_URL`, and either `DATABASE_URL` or the i
 
 Keep `AUTO_MIGRATE` disabled in multi-instance deployments. Terminate TLS at the load balancer or ingress, enforce request rate limits there, use a TLS-enabled PostgreSQL connection, rotate database credentials through the deployment secret manager, and back up PostgreSQL with point-in-time recovery.
 
-The iOS Debug build defaults to `http://127.0.0.1:8080`. Set `BUBBLY_API_BASE_URL` in the app scheme environment for a device or set the `BubblyAPIBaseURL` Info.plist value through build configuration for deployed builds.
+The iOS Debug build uses the Mac's Bonjour hostname so the same URL works in Simulator and on physical devices even when the Mac's IP address changes. Keep the backend bound to `0.0.0.0`, and keep `PUBLIC_BASE_URL` and `BUBBLY_API_BASE_URL` set to the same `.local` URL. A launch-scheme value takes precedence over a previously saved in-app override.
 
 ## Admin panel
 
@@ -41,7 +41,7 @@ Run the backend, then launch the panel from SwiftPM:
 swift run BubblyAdmin
 ```
 
-Open Settings, enter the backend base URL and the same admin token, then connect. The URL is saved in preferences and the token is stored in the macOS Keychain.
+The panel defaults to `http://Aungs-MacBook-Pro.local:8080`, matching the iOS development configuration. Open Settings, enter the same admin token, then connect. A custom URL is saved in preferences and the token is stored in the macOS Keychain.
 
 ## API
 

@@ -31,12 +31,6 @@ let package = Package(
                 )
             ]
         ),
-        .executableTarget(
-            name: "BubblyAdmin",
-            path: "AdminApp/Sources",
-            swiftSettings: swiftSettings,
-            linkerSettings: [.linkedFramework("Security")]
-        ),
         .testTarget(
             name: "BubblyBackendTests",
             dependencies: [
