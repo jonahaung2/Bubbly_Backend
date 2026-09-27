@@ -9,6 +9,7 @@ let package = Package(
         .iOS(.v26)
     ],
     dependencies: [
+        .package(name: "Shared", path: "../Shared"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.122.0"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.13.0"),
         .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.12.0"),
@@ -18,10 +19,11 @@ let package = Package(
         .executableTarget(
             name: "BubblyBackend",
             dependencies: [
+                .product(name: "Shared", package: "Shared"),
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
-                .product(name: "JWTKit", package: "jwt-kit")
+                .product(name: "JWTKit", package: "jwt-kit"),
             ],
             swiftSettings: swiftSettings,
             linkerSettings: [

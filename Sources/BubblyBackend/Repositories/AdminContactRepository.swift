@@ -105,7 +105,7 @@ enum AdminContactRepository {
             name: model.name,
             mobile: model.mobile,
             publicKey: model.publicKey,
-            hasPushToken: !model.pushToken.isEmpty,
+            pushToken: model.pushToken,
             photoURL: photoURL,
             createdAt: model.createdAt,
             updatedAt: model.updatedAt

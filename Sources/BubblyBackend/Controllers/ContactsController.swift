@@ -1,5 +1,6 @@
 import Fluent
 import Vapor
+import Shared
 
 struct ContactsController: RouteCollection {
     static func showProfilePhoto(request: Request) async throws -> Response {
@@ -27,20 +28,23 @@ struct ContactsController: RouteCollection {
     }
 
     func boot(routes: any RoutesBuilder) throws {
-        let contacts = routes.grouped("v1", "contacts")
-        contacts.get(":userID", use: showContact)
-        contacts.post("lookup", use: lookup)
+        let contacts = routes.grouped(
+            .constant(APIPath.Version.v1.rawValue),
+            .constant(APIPath.SubPath.contacts.rawValue)
+        )
+        contacts.get(":\(APIParameter.uid.rawValue)", use: getContact)
+        contacts.post(.constant(APIEndPoint.lookup.rawValue), use: postLookUp)
 
         let profile = routes.grouped("v1", "profile")
-        profile.get(use: showProfile)
-        profile.put(use: updateProfile)
-        profile.patch("push-token", use: updatePushToken)
-        profile.put("photo", use: updatePhoto)
+        profile.get(use: get)
+        profile.put(use: put)
+        profile.patch("push-token", use: patchPushToken)
+        profile.put("photo", use: putPhoto)
         profile.delete("photo", use: deletePhoto)
     }
 
-    private func showContact(request: Request) async throws -> Response {
-        guard let userID = request.parameters.get("userID"),
+    private func getContact(request: Request) async throws -> Response {
+        guard let userID = request.parameters.get(APIParameter.uid.rawValue),
               !userID.isEmpty,
               userID.count <= 128 else {
             throw Abort(.badRequest)
@@ -56,7 +60,7 @@ struct ContactsController: RouteCollection {
         ).encodeResponse(for: request)
     }
 
-    private func lookup(request: Request) async throws -> [ContactResponse] {
+    private func postLookUp(request: Request) async throws -> [ContactResponse] {
         let body = try request.content.decode(ContactLookupRequest.self)
         let numbers = try body.validatedNumbers()
         let contacts = try await ContactModel.query(on: request.db)
@@ -66,7 +70,7 @@ struct ContactsController: RouteCollection {
         return contacts.map { ContactResponse(model: $0, publicBaseURL: baseURL) }
     }
 
-    private func showProfile(request: Request) async throws -> ContactResponse {
+    private func get(request: Request) async throws -> ContactResponse {
         let principal = try request.auth.require(FirebasePrincipal.self)
         guard let model = try await ContactRepository.find(userID: principal.userID, on: request.db) else {
             throw Abort(.notFound)
@@ -74,9 +78,9 @@ struct ContactsController: RouteCollection {
         return response(for: model, request: request)
     }
 
-    private func updateProfile(request: Request) async throws -> ContactResponse {
+    private func put(request: Request) async throws -> ContactResponse {
         let principal = try request.auth.require(FirebasePrincipal.self)
-        let body = try request.content.decode(ProfileUpdateRequest.self).validated()
+        let body = try request.content.decode(ProfileUpdateRequest.self)
         let model = try await ContactRepository.upsertProfile(
             userID: principal.userID,
             profile: body,
@@ -85,7 +89,7 @@ struct ContactsController: RouteCollection {
         return response(for: model, request: request)
     }
 
-    private func updatePushToken(request: Request) async throws -> HTTPStatus {
+    private func patchPushToken(request: Request) async throws -> HTTPStatus {
         let principal = try request.auth.require(FirebasePrincipal.self)
         let pushToken = try request.content.decode(PushTokenUpdateRequest.self).validated()
         try await ContactRepository.upsertPushToken(
@@ -96,7 +100,7 @@ struct ContactsController: RouteCollection {
         return .noContent
     }
 
-    private func updatePhoto(request: Request) async throws -> ContactResponse {
+    private func putPhoto(request: Request) async throws -> ContactResponse {
         let principal = try request.auth.require(FirebasePrincipal.self)
         guard let rawContentType = request.headers.first(name: .contentType),
               let contentType = rawContentType.split(separator: ";", maxSplits: 1).first

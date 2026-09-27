@@ -12,7 +12,7 @@ struct AdminContactResponse: Content {
     let name: String
     let mobile: String
     let publicKey: String
-    let hasPushToken: Bool
+    let pushToken: String
     let photoURL: String?
     let createdAt: Date?
     let updatedAt: Date?

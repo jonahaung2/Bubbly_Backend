@@ -42,27 +42,28 @@ struct ContactLookupRequest: Content, Sendable {
 }
 
 struct ProfileUpdateRequest: Content, Sendable {
+    let uid: String
     let name: String
     let mobile: String
     let pushToken: String
     let publicKeyString: String
 
-    func validated() throws -> ProfileUpdateRequest {
-        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let mobile = mobile.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard name.count <= 100,
-              mobile.isEmpty || Validation.isE164(mobile),
-              pushToken.count <= 4_096,
-              publicKeyString.count <= 8_192 else {
-            throw Abort(.badRequest, reason: "Profile contains invalid values")
-        }
-        return ProfileUpdateRequest(
-            name: name,
-            mobile: mobile,
-            pushToken: pushToken,
-            publicKeyString: publicKeyString
-        )
-    }
+//    func validated() throws -> ProfileUpdateRequest {
+//        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+//        let mobile = mobile.trimmingCharacters(in: .whitespacesAndNewlines)
+//        guard name.count <= 100,
+//              mobile.isEmpty || Validation.isE164(mobile),
+//              pushToken.count <= 4_096,
+//              publicKeyString.count <= 8_192 else {
+//            throw Abort(.badRequest, reason: "Profile contains invalid values")
+//        }
+//        return ProfileUpdateRequest(
+//            name: name,
+//            mobile: mobile,
+//            pushToken: pushToken,
+//            publicKeyString: publicKeyString
+//        )
+//    }
 }
 
 struct PushTokenUpdateRequest: Content, Sendable {
