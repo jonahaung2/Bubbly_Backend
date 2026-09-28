@@ -22,8 +22,8 @@ enum AdminGroupRepository {
             groupIDs: groups.compactMap(\.id),
             on: database
         )
-        return AdminPage(
-            items: try groups.map { group in
+        return try AdminPage(
+            items: groups.map { group in
                 let id = try group.requireID()
                 return try response(group: group, members: membersByGroup[id] ?? [])
             },
@@ -101,8 +101,8 @@ enum AdminGroupRepository {
     }
 
     private static func response(group: GroupModel, members: [String]) throws -> AdminGroupResponse {
-        AdminGroupResponse(
-            id: try group.requireID(),
+        try AdminGroupResponse(
+            id: group.requireID(),
             uid: group.groupUID,
             name: group.name,
             photoURL: group.photoURL,

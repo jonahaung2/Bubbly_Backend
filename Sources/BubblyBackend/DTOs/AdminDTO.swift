@@ -27,8 +27,9 @@ struct AdminContactUpdateRequest: Content {
         let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let mobile = mobile.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty, name.count <= 100,
-              mobile.isEmpty || Validation.isE164(mobile),
-              publicKey.count <= 8_192 else {
+              mobile.isEmpty,
+              publicKey.count <= 8192
+        else {
             throw Abort(.badRequest, reason: "Contact contains invalid values")
         }
         return .init(name: name, mobile: mobile, publicKey: publicKey)
@@ -58,14 +59,16 @@ struct AdminGroupUpdateRequest: Content {
         let members = Array(Set(members)).sorted()
         guard !name.isEmpty, name.count <= 100,
               !members.isEmpty, members.count <= 256,
-              members.allSatisfy({ !$0.isEmpty && $0.count <= 128 && $0.trimmingCharacters(in: .whitespacesAndNewlines) == $0 }) else {
+              members.allSatisfy({ !$0.isEmpty && $0.count <= 128 && $0.trimmingCharacters(in: .whitespacesAndNewlines) == $0 })
+        else {
             throw Abort(.badRequest, reason: "Group contains invalid values")
         }
         if let photoURL, !photoURL.isEmpty {
-            guard photoURL.count <= 2_048,
+            guard photoURL.count <= 2048,
                   let url = URL(string: photoURL),
                   url.scheme?.lowercased() == "https",
-                  url.host != nil else {
+                  url.host != nil
+            else {
                 throw Abort(.badRequest, reason: "Group photoURL is invalid")
             }
         }

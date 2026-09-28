@@ -31,7 +31,8 @@ actor FirebaseTokenVerifier {
         }
         try payload.audience.verifyIntendedAudience(includes: projectID)
         guard payload.issuedAt.value <= Date.now.addingTimeInterval(30),
-              Date(timeIntervalSince1970: TimeInterval(payload.authTime)) <= Date.now.addingTimeInterval(30) else {
+              Date(timeIntervalSince1970: TimeInterval(payload.authTime)) <= Date.now.addingTimeInterval(30)
+        else {
             throw Abort(.unauthorized)
         }
         return FirebasePrincipal(userID: payload.subject.value)
@@ -39,7 +40,8 @@ actor FirebaseTokenVerifier {
 
     private func tokenHeader(_ token: String) throws -> TokenHeader {
         guard let segment = token.split(separator: ".", omittingEmptySubsequences: false).first,
-              segment.count <= 4_096 else {
+              segment.count <= 4096
+        else {
             throw Abort(.unauthorized)
         }
         var encoded = String(segment)
@@ -89,17 +91,18 @@ actor FirebaseTokenVerifier {
 
     private func cacheLifetime(from headers: HTTPHeaders) -> TimeInterval {
         guard let cacheControl = headers.first(name: .cacheControl) else {
-            return 3_600
+            return 3600
         }
         for directive in cacheControl.split(separator: ",") {
             let components = directive.split(separator: "=", maxSplits: 1)
             if components.count == 2,
                components[0].trimmingCharacters(in: .whitespaces).lowercased() == "max-age",
-               let seconds = TimeInterval(components[1].trimmingCharacters(in: .whitespaces)) {
-                return max(300, min(seconds, 86_400))
+               let seconds = TimeInterval(components[1].trimmingCharacters(in: .whitespaces))
+            {
+                return max(300, min(seconds, 86400))
             }
         }
-        return 3_600
+        return 3600
     }
 }
 

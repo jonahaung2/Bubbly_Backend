@@ -38,12 +38,13 @@ struct ImageUpload: Sendable {
     init(request: Request, maximumSize: Int) throws {
         guard let rawContentType = request.headers.first(name: .contentType),
               let contentType = rawContentType
-                .split(separator: ";", maxSplits: 1)
-                .first
-                .map({ String($0).trimmingCharacters(in: .whitespaces).lowercased() }),
+              .split(separator: ";", maxSplits: 1)
+              .first
+              .map({ String($0).trimmingCharacters(in: .whitespaces).lowercased() }),
               let body = request.body.data,
               body.readableBytes > 0,
-              body.readableBytes <= maximumSize else {
+              body.readableBytes <= maximumSize
+        else {
             throw Abort(.payloadTooLarge)
         }
         let data = Data(body.readableBytesView)

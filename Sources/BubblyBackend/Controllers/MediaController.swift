@@ -7,7 +7,7 @@ struct MediaUploadResponse: Content, Sendable {
 }
 
 struct MediaController: RouteCollection {
-    static let maximumSize = 10 * 1_024 * 1_024
+    static let maximumSize = 10 * 1024 * 1024
 
     func boot(routes: any RoutesBuilder) throws {
         let media = routes.grouped("v1", "media")
@@ -20,10 +20,11 @@ struct MediaController: RouteCollection {
         let key = try MediaKey(request: request)
         guard let rawContentType = request.headers.first(name: .contentType),
               let contentType = rawContentType.split(separator: ";", maxSplits: 1).first
-                .map({ String($0).trimmingCharacters(in: .whitespaces).lowercased() }),
+              .map({ String($0).trimmingCharacters(in: .whitespaces).lowercased() }),
               let body = request.body.data,
               body.readableBytes > 0,
-              body.readableBytes <= Self.maximumSize else {
+              body.readableBytes <= Self.maximumSize
+        else {
             throw Abort(.payloadTooLarge)
         }
         let data = Data(body.readableBytesView)
@@ -100,7 +101,8 @@ private struct MediaKey {
               let scopeID = request.parameters.get("scopeID"),
               Self.isValid(scopeID),
               let assetID = request.parameters.get("assetID"),
-              Self.isValid(assetID) else {
+              Self.isValid(assetID)
+        else {
             throw Abort(.badRequest, reason: "The media path is invalid")
         }
         self.kind = kind

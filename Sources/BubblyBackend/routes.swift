@@ -5,7 +5,7 @@ func routes(_ app: Application) throws {
         .ok
     }
 
-    app.get("v1", "profile-photos", ":userID", use: ContactsController.showProfilePhoto)
+    app.get("v1", "contacts", "profile_photo", ":userID", use: ContactsController.showProfilePhoto)
     app.get("v1", "media", ":kind", ":scopeID", ":assetID", use: PublicMediaController.show)
 
     let authenticated = app.grouped(FirebaseAuthenticationMiddleware())

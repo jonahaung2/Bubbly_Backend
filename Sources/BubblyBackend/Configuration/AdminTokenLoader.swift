@@ -2,7 +2,7 @@ import Foundation
 import Vapor
 
 #if canImport(Security)
-import Security
+    import Security
 #endif
 
 enum AdminTokenLoader {
@@ -18,22 +18,23 @@ enum AdminTokenLoader {
 
     private static func developmentKeychainToken() -> String? {
         #if canImport(Security) && os(macOS)
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: "com.bubbly.admin",
-            kSecAttrAccount as String: "admin-api-token",
-            kSecReturnData as String: true,
-            kSecMatchLimit as String: kSecMatchLimitOne
-        ]
-        var result: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
-              let data = result as? Data,
-              let token = String(data: data, encoding: .utf8)?.trimmedNonempty else {
-            return nil
-        }
-        return token
+            let query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrService as String: "com.bubbly.admin",
+                kSecAttrAccount as String: "admin-api-token",
+                kSecReturnData as String: true,
+                kSecMatchLimit as String: kSecMatchLimitOne,
+            ]
+            var result: CFTypeRef?
+            guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+                  let data = result as? Data,
+                  let token = String(data: data, encoding: .utf8)?.trimmedNonempty
+            else {
+                return nil
+            }
+            return token
         #else
-        return nil
+            return nil
         #endif
     }
 }

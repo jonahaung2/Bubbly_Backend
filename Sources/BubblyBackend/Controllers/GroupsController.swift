@@ -73,7 +73,8 @@ struct GroupsController: RouteCollection {
     private func validate(groupID: String) throws {
         guard !groupID.isEmpty,
               groupID.count <= 128,
-              groupID.trimmingCharacters(in: .whitespacesAndNewlines) == groupID else {
+              groupID.trimmingCharacters(in: .whitespacesAndNewlines) == groupID
+        else {
             throw Abort(.badRequest, reason: "groupID is invalid")
         }
     }

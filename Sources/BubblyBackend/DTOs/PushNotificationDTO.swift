@@ -22,7 +22,8 @@ struct PushNotificationRequest: Content, Sendable {
         guard !recipients.isEmpty, recipients.count <= 256,
               !conversationID.isEmpty, conversationID.count <= 128,
               title?.count ?? 0 <= 100,
-              body?.count ?? 0 <= 4_096 else {
+              body?.count ?? 0 <= 4096
+        else {
             throw Abort(.badRequest, reason: "Push notification contains invalid values")
         }
         var seen = Set<String>()
@@ -31,7 +32,8 @@ struct PushNotificationRequest: Content, Sendable {
             let messageContent = recipient.messageContent.trimmingCharacters(in: .whitespacesAndNewlines)
             guard userID != senderUserID,
                   !userID.isEmpty, userID.count <= 128,
-                  !messageContent.isEmpty, messageContent.utf8.count <= 32_768 else {
+                  !messageContent.isEmpty, messageContent.utf8.count <= 32768
+            else {
                 throw Abort(.badRequest, reason: "Push notification recipient contains invalid values")
             }
             guard seen.insert(userID).inserted else {
@@ -40,10 +42,11 @@ struct PushNotificationRequest: Content, Sendable {
             return Recipient(userID: userID, messageContent: messageContent)
         }
         if let deepLink, !deepLink.isEmpty {
-            guard deepLink.count <= 2_048,
+            guard deepLink.count <= 2048,
                   let url = URL(string: deepLink),
                   let scheme = url.scheme?.lowercased(),
-                  ["bubbly", "https"].contains(scheme) else {
+                  ["bubbly", "https"].contains(scheme)
+            else {
                 throw Abort(.badRequest, reason: "Push notification deep link is invalid")
             }
         }

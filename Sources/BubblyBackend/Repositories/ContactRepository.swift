@@ -1,6 +1,7 @@
 import Fluent
 import FluentPostgresDriver
 import Foundation
+import Shared
 import Vapor
 
 enum ContactRepository {
@@ -11,17 +12,17 @@ enum ContactRepository {
     }
 
     static func upsertProfile(
-        userID: String,
-        profile: ProfileUpdateRequest,
+        uid: String,
+        profile: ContactDTO.ResponseModel,
         on database: any Database
     ) async throws -> ContactModel {
         let sql = try sqlDatabase(database)
         try await sql.raw(
             """
-            INSERT INTO contacts
+            INSERT INTO \(unsafeRaw: API.Path.contacts.rawValue)
                 (id, firebase_uid, name, mobile, push_token, public_key, created_at, updated_at)
             VALUES
-                (\(bind: UUID()), \(bind: userID), \(bind: profile.name), \(bind: profile.mobile),
+                (\(bind: UUID()), \(bind: uid), \(bind: profile.name), \(bind: profile.mobile),
                  \(bind: profile.pushToken), \(bind: profile.publicKeyString), NOW(), NOW())
             ON CONFLICT (firebase_uid) DO UPDATE SET
                 name = EXCLUDED.name,
@@ -31,30 +32,11 @@ enum ContactRepository {
                 updated_at = NOW()
             """
         ).run()
-        return try await require(userID: userID, on: database)
-    }
-
-    static func upsertPushToken(
-        userID: String,
-        pushToken: String,
-        on database: any Database
-    ) async throws {
-        let sql = try sqlDatabase(database)
-        try await sql.raw(
-            """
-            INSERT INTO contacts
-                (id, firebase_uid, name, mobile, push_token, public_key, created_at, updated_at)
-            VALUES
-                (\(bind: UUID()), \(bind: userID), '', '', \(bind: pushToken), '', NOW(), NOW())
-            ON CONFLICT (firebase_uid) DO UPDATE SET
-                push_token = EXCLUDED.push_token,
-                updated_at = NOW()
-            """
-        ).run()
+        return try await require(userID: uid, on: database)
     }
 
     static func clearPushToken(
-        userID: String,
+        uid: String,
         matching pushToken: String,
         on database: any Database
     ) async throws {
@@ -64,16 +46,16 @@ enum ContactRepository {
             UPDATE contacts SET
                 push_token = '',
                 updated_at = NOW()
-            WHERE firebase_uid = \(bind: userID)
+            WHERE firebase_uid = \(bind: uid)
                 AND push_token = \(bind: pushToken)
             """
         ).run()
     }
 
     static func upsertPhoto(
-        userID: String,
+        uid: String,
         data: Data,
-        contentType: String,
+        photoContentType: String,
         version: UUID,
         on database: any Database
     ) async throws -> ContactModel {
@@ -84,8 +66,8 @@ enum ContactRepository {
                 (id, firebase_uid, name, mobile, push_token, public_key,
                  photo_data, photo_content_type, photo_version, created_at, updated_at)
             VALUES
-                (\(bind: UUID()), \(bind: userID), '', '', '', '',
-                 \(bind: data), \(bind: contentType), \(bind: version), NOW(), NOW())
+                (\(bind: UUID()), \(bind: uid), '', '', '', '',
+                 \(bind: data), \(bind: photoContentType), \(bind: version), NOW(), NOW())
             ON CONFLICT (firebase_uid) DO UPDATE SET
                 photo_data = EXCLUDED.photo_data,
                 photo_content_type = EXCLUDED.photo_content_type,
@@ -93,7 +75,7 @@ enum ContactRepository {
                 updated_at = NOW()
             """
         ).run()
-        return try await require(userID: userID, on: database)
+        return try await require(userID: uid, on: database)
     }
 
     static func deletePhoto(userID: String, on database: any Database) async throws {

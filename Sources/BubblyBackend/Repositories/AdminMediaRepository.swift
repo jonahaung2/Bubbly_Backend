@@ -101,8 +101,8 @@ enum AdminMediaRepository {
         model: MediaAssetModel,
         publicBaseURL: URL
     ) throws -> AdminMediaResponse {
-        AdminMediaResponse(
-            id: try model.requireID(),
+        try AdminMediaResponse(
+            id: model.requireID(),
             kind: model.kind,
             scopeID: model.scopeID,
             assetID: model.assetID,
@@ -131,7 +131,7 @@ enum AdminMediaRepository {
         ["v1", "media", kind, scopeID, assetID]
             .reduce(publicBaseURL) { $0.appending(path: $1) }
             .appending(queryItems: [
-                .init(name: "v", value: version.uuidString.lowercased())
+                .init(name: "v", value: version.uuidString.lowercased()),
             ])
             .absoluteString
     }

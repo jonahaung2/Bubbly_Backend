@@ -32,7 +32,8 @@ struct PushNotificationsController: RouteCollection {
             for recipient in notification.recipients {
                 group.addTask {
                     guard let pushToken = tokensByUserID[recipient.userID],
-                          !pushToken.isEmpty, pushToken.count <= 4_096 else {
+                          !pushToken.isEmpty, pushToken.count <= 4096
+                    else {
                         return Delivery(
                             result: .init(
                                 recipientUserID: recipient.userID,
@@ -92,7 +93,7 @@ struct PushNotificationsController: RouteCollection {
                 continue
             }
             try await ContactRepository.clearPushToken(
-                userID: delivery.result.recipientUserID,
+                uid: delivery.result.recipientUserID,
                 matching: invalidPushToken,
                 on: request.db
             )

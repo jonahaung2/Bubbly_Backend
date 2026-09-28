@@ -28,7 +28,7 @@ enum GroupRepository {
             on: database
         )
         let items = try groups.map { group in
-            response(group: group, members: membersByGroup[try group.requireID()] ?? [])
+            try response(group: group, members: membersByGroup[group.requireID()] ?? [])
         }
         return GroupListResponse(
             items: items,
@@ -43,14 +43,16 @@ enum GroupRepository {
     ) async throws -> GroupResponse? {
         guard let group = try await GroupModel.query(on: database)
             .filter(\.$groupUID == groupID)
-            .first() else {
+            .first()
+        else {
             return nil
         }
         let id = try group.requireID()
         guard try await GroupMemberModel.query(on: database)
             .filter(\.$group.$id == id)
             .filter(\.$userID == userID)
-            .first() != nil else {
+            .first() != nil
+        else {
             return nil
         }
         let members = try await memberIDs(groupID: id, on: database)
@@ -67,7 +69,8 @@ enum GroupRepository {
             let group: GroupModel
             if let existing = try await GroupModel.query(on: transaction)
                 .filter(\.$groupUID == groupID)
-                .first() {
+                .first()
+            {
                 guard existing.createdBy == userID else {
                     throw Abort(.forbidden)
                 }
@@ -109,7 +112,8 @@ enum GroupRepository {
     ) async throws {
         guard let group = try await GroupModel.query(on: database)
             .filter(\.$groupUID == groupID)
-            .first() else {
+            .first()
+        else {
             return
         }
         guard group.createdBy == userID else {

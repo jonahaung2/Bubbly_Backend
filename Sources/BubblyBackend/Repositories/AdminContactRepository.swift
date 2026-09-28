@@ -28,8 +28,8 @@ enum AdminContactRepository {
         if hasNextPage {
             models.removeLast(models.count - page.limit)
         }
-        return AdminPage(
-            items: try models.map { try response(model: $0, publicBaseURL: publicBaseURL) },
+        return try AdminPage(
+            items: models.map { try response(model: $0, publicBaseURL: publicBaseURL) },
             nextCursor: hasNextPage ? models.last?.id : nil
         )
     }
@@ -95,12 +95,12 @@ enum AdminContactRepository {
             ["v1", "profile-photos", model.firebaseUID]
                 .reduce(publicBaseURL) { $0.appending(path: $1) }
                 .appending(queryItems: [
-                    .init(name: "v", value: version.uuidString.lowercased())
+                    .init(name: "v", value: version.uuidString.lowercased()),
                 ])
                 .absoluteString
         }
-        return AdminContactResponse(
-            id: try model.requireID(),
+        return try AdminContactResponse(
+            id: model.requireID(),
             firebaseUID: model.firebaseUID,
             name: model.name,
             mobile: model.mobile,

@@ -46,7 +46,8 @@ struct FirebaseServiceAccount: Decodable, Sendable {
                   !credentials.privateKey.isEmpty,
                   !credentials.clientEmail.isEmpty,
                   credentials.tokenURI.scheme?.lowercased() == "https",
-                  credentials.tokenURI.host != nil else {
+                  credentials.tokenURI.host != nil
+            else {
                 throw ConfigurationError.invalid("Firebase service account")
             }
             return credentials

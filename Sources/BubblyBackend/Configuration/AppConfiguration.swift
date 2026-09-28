@@ -19,7 +19,8 @@ struct AppConfiguration: Sendable {
               let publicBaseURL = URL(string: publicBaseURLString),
               let scheme = publicBaseURL.scheme?.lowercased(),
               ["http", "https"].contains(scheme),
-              publicBaseURL.host != nil else {
+              publicBaseURL.host != nil
+        else {
             throw ConfigurationError.invalid("PUBLIC_BASE_URL")
         }
         if environment == .production, publicBaseURL.scheme != "https" {

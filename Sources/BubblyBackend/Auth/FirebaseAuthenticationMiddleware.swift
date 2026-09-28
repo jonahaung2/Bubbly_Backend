@@ -4,7 +4,8 @@ struct FirebaseAuthenticationMiddleware: AsyncMiddleware {
     func respond(to request: Request, chainingTo next: any AsyncResponder) async throws -> Response {
         guard let bearer = request.headers.bearerAuthorization,
               !bearer.token.isEmpty,
-              bearer.token.count <= 16_384 else {
+              bearer.token.count <= 16384
+        else {
             throw Abort(.unauthorized)
         }
 

@@ -119,7 +119,7 @@ actor FirebasePushNotificationSender {
                 data: [
                     "message": recipient.messageContent,
                     "con_id": notification.conversationID,
-                    "deep_link": notification.deepLink ?? ""
+                    "deep_link": notification.deepLink ?? "",
                 ],
                 apns: .init(
                     payload: .init(
@@ -145,7 +145,8 @@ actor FirebasePushNotificationSender {
                 accessTokenExpiration = .distantPast
             }
             if let failure = try? response.content.decode(FCMErrorResponse.self),
-               failure.isPermanentDeviceTokenFailure {
+               failure.isPermanentDeviceTokenFailure
+            {
                 throw FirebasePushNotificationError.invalidDeviceToken
             }
             throw FirebasePushNotificationError.rejected
@@ -163,8 +164,8 @@ actor FirebasePushNotificationSender {
         }
         let issuedAt = Date.now
         let keys = JWTKeyCollection()
-        await keys.add(
-            rsa: try Insecure.RSA.PrivateKey(pem: credentials.privateKey),
+        try await keys.add(
+            rsa: Insecure.RSA.PrivateKey(pem: credentials.privateKey),
             digestAlgorithm: .sha256,
             kid: .init(string: credentials.privateKeyID)
         )
@@ -173,7 +174,7 @@ actor FirebasePushNotificationSender {
                 iss: .init(value: credentials.clientEmail),
                 scope: "https://www.googleapis.com/auth/firebase.messaging",
                 aud: .init(value: [credentials.tokenURI.absoluteString]),
-                exp: .init(value: issuedAt.addingTimeInterval(3_600)),
+                exp: .init(value: issuedAt.addingTimeInterval(3600)),
                 iat: .init(value: issuedAt)
             ),
             kid: .init(string: credentials.privateKeyID)
@@ -181,7 +182,7 @@ actor FirebasePushNotificationSender {
         var components = URLComponents()
         components.queryItems = [
             .init(name: "grant_type", value: "urn:ietf:params:oauth:grant-type:jwt-bearer"),
-            .init(name: "assertion", value: assertion)
+            .init(name: "assertion", value: assertion),
         ]
         guard let body = components.percentEncodedQuery else {
             throw Abort(.internalServerError)

@@ -42,12 +42,12 @@ private func makeDatabaseConfiguration(environment: Environment) throws -> SQLPo
             .makeClientConfiguration()
         }
 
-    return SQLPostgresConfiguration(
+    return try SQLPostgresConfiguration(
         hostname: hostname,
         port: port,
         username: username,
         password: password,
         database: database,
-        tls: environment == .production ? .require(try .init(configuration: tlsConfiguration)) : .disable
+        tls: environment == .production ? .require(.init(configuration: tlsConfiguration)) : .disable
     )
 }

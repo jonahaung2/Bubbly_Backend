@@ -19,14 +19,16 @@ struct GroupUpsertRequest: Content, Sendable {
                   !member.isEmpty
                       && member.count <= 128
                       && member.trimmingCharacters(in: .whitespacesAndNewlines) == member
-              }) else {
+              })
+        else {
             throw Abort(.badRequest, reason: "Group contains invalid values")
         }
         if let photoURL, !photoURL.isEmpty {
-            guard photoURL.count <= 2_048,
+            guard photoURL.count <= 2048,
                   let url = URL(string: photoURL),
                   url.scheme?.lowercased() == "https",
-                  url.host != nil else {
+                  url.host != nil
+            else {
                 throw Abort(.badRequest, reason: "Group photoURL is invalid")
             }
         }
